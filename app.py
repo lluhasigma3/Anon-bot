@@ -3,44 +3,42 @@ import threading
 from flask import Flask
 import telebot
 
-TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
-YOUR_CHAT_ID = os.environ.get("YOUR_CHAT_ID")
+TELEGRAM_TOKEN = "8892707247:AAER1fzuVWRXHEWzohnt48jwcbcIMCCxF9E"
+YOUR_CHAT_ID = "8028897913"
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 app = Flask(__name__)
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.reply_to(message, "Привет! Напиши свой вопрос, и админ ответит.")
+    bot.reply_to(message, "Напиши сообщение.")
 
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
     user_id = message.from_user.id
-    username = message.from_user.username or "Нет юзернейма"
+    username = message.from_user.username or "Нет"
     text = message.text
 
     if str(message.chat.id) == str(YOUR_CHAT_ID) and text.startswith('/reply'):
         try:
             parts = text.split(' ', 2)
-            target_id = parts[1]
-            reply_text = parts[2]
-            bot.send_message(target_id, f"👑 Ответ от админа:\n\n{reply_text}")
-            bot.reply_to(message, "✅ Ответ отправлен!")
+            bot.send_message(parts[1], f"Ответ: {parts[2]}")
+            bot.reply_to(message, "Отправлено")
         except:
-            bot.reply_to(message, "⚠️ Формат: /reply ID текст")
+            bot.reply_to(message, "Ошибка")
         return
 
-    admin_msg = f"📩 Новое сообщение!\n\n👤 От: {username}\n🆔 ID: {user_id}\n\n💬 Текст:\n{text}\n\n✍️ Ответить: /reply {user_id} твой_текст"
+    admin_msg = f"Сообщение от {username} (ID: {user_id}):\n{text}\n\nОтвет: /reply {user_id} текст"
     
     try:
         bot.send_message(YOUR_CHAT_ID, admin_msg)
-        bot.reply_to(message, "✅ Сообщение отправлено!")
+        bot.reply_to(message, "Отправлено")
     except:
-        bot.reply_to(message, "⚠️ Ошибка: админ недоступен.")
+        bot.reply_to(message, "Ошибка")
 
 @app.route('/')
 def health():
-    return "Bot is running!"
+    return "OK"
 
 def run_bot():
     bot.infinity_polling()
