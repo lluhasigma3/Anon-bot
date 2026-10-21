@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.reply_to(message, "Привет! Напиши свой вопрос, и админ ответит тебе.")
+    bot.reply_to(message, "Привет! Напиши свой вопрос, и админ ответит.")
 
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
@@ -19,26 +19,23 @@ def handle_text(message):
     username = message.from_user.username or "Нет юзернейма"
     text = message.text
 
-    # Если пишет сам админ (ты) и использует команду /reply
     if str(message.chat.id) == str(YOUR_CHAT_ID) and text.startswith('/reply'):
         try:
             parts = text.split(' ', 2)
             target_id = parts[1]
             reply_text = parts[2]
-            
-            bot.send_message(target_id, f"👑 **Ответ от админа:**\n\n{reply_text}", parse_mode='Markdown')
+            bot.send_message(target_id, f"👑 Ответ от админа:\n\n{reply_text}")
             bot.reply_to(message, "✅ Ответ отправлен!")
         except:
-            bot.reply_to(message, "⚠️ Ошибка. Пиши так: /reply ID текст")
+            bot.reply_to(message, "⚠️ Формат: /reply ID текст")
         return
 
-    # Если пишет обычный пользователь
-    admin_msg = f"📩 Новое сообщение!\n\n👤 От: {username}\n🆔 ID: `{user_id}`\n\n💬 Текст:\n{text}\n\n✍️ Ответить: `/reply {user_id} твой_текст`"
+    admin_msg = f"📩 Новое сообщение!\n\n👤 От: {username}\n🆔 ID: {user_id}\n\n💬 Текст:\n{text}\n\n✍️ Ответить: /reply {user_id} твой_текст"
     
     try:
-        bot.send_message(YOUR_CHAT_ID, admin_msg, parse_mode='Markdown')
-        bot.reply_to(message, "✅ Сообщение отправлено! Жди ответа.")
-    except Exception as e:
+        bot.send_message(YOUR_CHAT_ID, admin_msg)
+        bot.reply_to(message, "✅ Сообщение отправлено!")
+    except:
         bot.reply_to(message, "⚠️ Ошибка: админ недоступен.")
 
 @app.route('/')
