@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.reply_to(message, "Напиши сообщение.")
+    bot.reply_to(message, "Привет! Это бот сообщения по Counter Flame Upgrader. Тут ты можешь написать сообщение админу, и есть шанс, что твою идею примут.")
 
 @bot.message_handler(content_types=['text'])
 def handle_text(message):
@@ -22,19 +22,19 @@ def handle_text(message):
     if str(message.chat.id) == str(YOUR_CHAT_ID) and text.startswith('/reply'):
         try:
             parts = text.split(' ', 2)
-            bot.send_message(parts[1], f"Ответ: {parts[2]}")
-            bot.reply_to(message, "Отправлено")
-        except:
-            bot.reply_to(message, "Ошибка")
+            bot.send_message(parts[1], f"Ответ от админа: {parts[2]}")
+            bot.reply_to(message, "Отправлено!")
+        except Exception as e:
+            bot.reply_to(message, f"Ошибка: {e}")
         return
 
     admin_msg = f"Сообщение от {username} (ID: {user_id}):\n{text}\n\nОтвет: /reply {user_id} текст"
     
     try:
         bot.send_message(YOUR_CHAT_ID, admin_msg)
-        bot.reply_to(message, "Отправлено")
-    except:
-        bot.reply_to(message, "Ошибка")
+        bot.reply_to(message, "Отправлено!")
+    except Exception as e:
+        bot.reply_to(message, f"Ошибка: {e}")
 
 @app.route('/')
 def health():
